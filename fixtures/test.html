@@ -1,0 +1,59 @@
+<form method="post" novalidate>
+    <input type="hidden" name="hiddenData" value="1234">
+    
+    <input type="text" name="fullName" id="fullNameId" required placeholder="Full Name">
+    <hr>
+    <input type="password" name="password" required placeholder="Password">
+    <hr>
+    <input type="email" name="email" id="emailField" placeholder="email">
+    <hr>
+    <input type="tel" name="phone" placeholder="+1 234 5678890">
+    <hr>
+    <input type="url" name="url" placeholder="http://">
+    <hr>
+    <label>
+        <input type="checkbox" name="possibilities[]" id="possibilityOneId" value="one"> One
+    </label>
+    <label>
+        <input type="checkbox" name="possibilities[]" id="possibilityTwoId" value="two" checked> Two
+    </label>
+    <hr>
+    <label>
+        <input type="radio" name="choice" id="choiceYesId" value="yes"> Yes
+    </label>
+    <label>
+        <input type="radio" name="choice" value="no" required> No
+    </label>
+    <hr>
+    <label>
+        <!-- There is no value here for testing purposes -->
+        <input type="checkbox" name="agree" id="agreeId" required>
+        Agree
+    </label>
+    <hr>
+    <label>
+        <input type="checkbox" name="subscribe" id="subscribeId" value="1" checked>
+        Subscribe
+    </label>
+    <hr>
+    <label>
+        Single Country <br/>
+        <select name="singleCountry" required>
+            <option></option>
+            <option id="singleCountryUsOptionId">United States</option>
+        </select>
+    </label>
+    <hr>
+    <label>
+        Multiple Countries <br/>
+        <select name="country[]" multiple required>
+            <option value="ru">Russia</option>
+            <option value="uk">United Kingdom</option>
+        </select>
+    </label>
+    <hr>
+    <label for="messageId">Message</label><br/>
+    <textarea cols="30" rows="6" name="message" id="messageId" required></textarea>
+    <hr>
+    <button type="submit">Submit</button>
+</form>

@@ -1,0 +1,15 @@
+{
+  "name": "kubyshkin/duckform",
+  "description": "Simple PHP Form validator using HTML markup",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dmitriy Kubyshkin",
+      "email": "dmitriy@kubyshkin.ru"
+    }
+  ],
+  "require": {
+    "phpunit/phpunit": "3.7.28"
+  }
+}
