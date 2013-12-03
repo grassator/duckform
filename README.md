@@ -17,8 +17,15 @@ $form =  DuckForm::fromFile("file_with_form_markup.html");
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form->bind($_REQUEST);
+    if($form->validate()) {
+        // Form processing should go here
+        
+        // redirecting user to a thank you page
+        header('Location: /thankyou.html');
+        exit;
+    }
 }
-echo $form; 
+echo $form;
 ```
 
 It will render errors if necessary and will re-fill submitted form data. 
