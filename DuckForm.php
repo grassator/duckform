@@ -153,6 +153,66 @@ class DuckForm {
     }
 
     /**
+     * Returns currently bound values for the form
+     * @return array
+     */
+    public function getValues() {
+        $result = array();
+        foreach($this->fields as $name => $fieldData) {
+            if(isset($fieldData['value'])) {
+                $result[$name] = $fieldData['value'];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Gets value of a field from DOM. It is rather tricky because of
+     * how radio, checkboxes and selects work
+     * @param DOMElement $fieldNode
+     * @param array $data
+     * @return array
+     */
+    protected function extractValueFromDOM($fieldNode, $data) {
+        $value = null;
+        if($data['type'] === 'select') {
+            if($fieldNode->hasAttribute('multiple')) {
+                $value = array();
+            }
+            /** @var DOMElement $option */
+            foreach ($fieldNode->getElementsByTagName('option') as $option) {
+                // option has behaviour that if no value is specified then
+                // value is considered to be the same as option's text
+                $optionValue = $option->hasAttribute('value') ?
+                    $option->getAttribute('value') :
+                    $option->nodeValue;
+                if($option->hasAttribute('selected')) {
+                    if(is_array($value)) {
+                        $value[] = $optionValue;
+                    } else {
+                        $value = $optionValue;
+                        break;
+                    }
+                }
+            }
+        } elseif($data['type'] === 'radio' || $data['type'] === 'checkbox') {
+            if($fieldNode->hasAttribute('checked')) {
+                if($fieldNode->hasAttribute('value')) {
+                    $value = $fieldNode->getAttribute('value');
+                } else {
+                    $value = 'on';
+                }
+            }
+        } else {
+            if($fieldNode->hasAttribute('value')) {
+                $value = $fieldNode->getAttribute('value');
+            }
+        }
+        $data['value'] = $value;
+        return $data;
+    }
+
+    /**
      * Extracts field information from DOMElement
      * @param DOMElement $fieldNode
      * @param string $tagName
@@ -193,6 +253,8 @@ class DuckForm {
         // in $_REQUEST and thus it is useless to us
         if(!$name) return;
 
+        $data = $this->extractValueFromDOM($fieldNode, $data);
+
         // Support for name="someName[]" notation that allows
         // multiple fields to have the same name to be processed
         // in a $_REQUEST as an array
@@ -203,6 +265,19 @@ class DuckForm {
                 $this->fields[$name]['multiple'] = true;
             }
             $this->fields[$name]['nodes'][] = $fieldNode;
+
+            // Merging values
+            if(!is_array($this->fields[$name]['value'])) {
+                if(isset($this->fields[$name]['value'])) {
+                    $this->fields[$name]['value'] = array($this->fields[$name]['value']);
+                }
+            }
+            if(isset($data['value'])) {
+                if(!is_array($this->fields[$name]['value'])){
+                    $this->fields[$name]['value'] = array();
+                }
+                $this->fields[$name]['value'][] = $data['value'];
+            }
 
             // Appending new attributes if any but not rewriting
             // this is helpful if for example "required" attribute

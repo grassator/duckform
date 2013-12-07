@@ -158,4 +158,14 @@ class DuckFormTest extends PHPUnit_Framework_TestCase {
             'Form transformation to HTML with bound values should produce equivalent DOM'
         );
     }
+
+    public function testGettingValuesFromHtml() {
+        $values = $this->form->getValues();
+        $this->assertEquals(array(
+            'hiddenData' => '1234',
+            'possibilities' => array('two'),
+            'subscribe' => '1',
+            'country' => array('ru'),
+        ), $values, "should collect values from HTML when initializing");
+    }
 }
