@@ -486,9 +486,14 @@ class DuckForm {
 
         // Writing errors to document if necessary
         if($writeToDocument && $this->errors) {
+
+            // Using html5 autofocus attribute to focus first field with error
+            $isAutoFocusSet = false;
+
             foreach($this->errors as $name => $errorList) {
                 $errorListElement = $this->doc->createElement('div');
                 $errorListElement->setAttribute('class', $this->errorListClass);
+
                 foreach($errorList as $error) {
                     $errorElement = $this->doc->createElement('div');
                     $errorElement->setAttribute('class', $this->errorClass);
@@ -498,6 +503,12 @@ class DuckForm {
 
                 /** @var DOMElement $targetElement */
                 $targetElement = $this->fields[$name]['nodes'][0];
+
+                if(!$isAutoFocusSet && $this->fields[$name]['type'] === 'text') {
+                    $targetElement->setAttribute('autofocus', 'autofocus');
+                    $isAutoFocusSet = true;
+                }
+
                 // Special case usually for checkboxes and radio buttons
                 // when label is wrapped around an element.
                 if (strtolower($targetElement->parentNode->nodeName) === 'label') {

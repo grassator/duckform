@@ -46,7 +46,6 @@ $form->errorListClass = 'my-error-list-class';
 ## Known Issues / Missing Features
 
 * No file upload support
-* No AJAX support
 * Lack of validators except for required and email
 * Lack of custom validator support
 
