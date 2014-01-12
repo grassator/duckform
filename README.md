@@ -15,6 +15,14 @@ require 'DuckForm.php';
 
 $form =  DuckForm::fromFile("file_with_form_markup.html");
 
+// Custom validator
+$this->form->addFieldValidator('country', function($value, $fields, $form){
+    if(count($value) > 2) {
+        return "There should be more than 2 countries selected.";
+    }
+    return false;
+})
+
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form->bind($_REQUEST);
     if($form->validate()) {
@@ -47,7 +55,6 @@ $form->errorListClass = 'my-error-list-class';
 
 * No file upload support
 * Lack of validators except for required and email
-* Lack of custom validator support
 
 ## Licensing
 

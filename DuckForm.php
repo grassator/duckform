@@ -36,6 +36,20 @@ class DuckForm {
     );
 
     /**
+     * Holds array of validation callbacks
+     * for validation several fields at once
+     * @var callable[]
+     */
+    protected $formValidators = array();
+
+    /**
+     * Holds array of validation callbacks
+     * for specific fields
+     * @var callable[]
+     */
+    protected $fieldValidators = array();
+
+    /**
      * List of attributes on form elements that have a meaning for us
      * be it identification of an elements or validation
      * @var array
@@ -436,6 +450,26 @@ class DuckForm {
     }
 
     /**
+     * @param string $name
+     * @param callable $callable
+     */
+    public function addFieldValidator($name, $callable)
+    {
+        $this->fieldValidators[] = array(
+            'name' => $name,
+            'callable' => $callable
+        );
+    }
+
+    /**
+     * @param callable $callable
+     */
+    public function addFormValidator($callable)
+    {
+        $this->formValidators[] = $callable;
+    }
+
+    /**
      * Validates the form, the errors if any will be located in
      * 'errors' attribute of the form
      * @param  bool $enforceFieldTypes e.g. validate that "email" field has a valid email
@@ -481,6 +515,19 @@ class DuckForm {
 
             if($fieldErrors) {
                 $this->errors[$name] = $fieldErrors;
+            }
+        }
+
+        // Custom field validators
+        foreach($this->fieldValidators as &$validator) {
+            $name = $validator['name'];
+            $value = isset($this->fields[$name]) ? $this->fields[$name] : null;
+            $error = call_user_func_array($validator['callable'], array($value, $this->fields, $this));
+            if($error) {
+                if(!isset($this->errors[$name])) {
+                    $this->errors[$name] = array();
+                }
+                $this->errors[$name][] = $error;
             }
         }
 

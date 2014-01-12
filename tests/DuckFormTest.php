@@ -33,6 +33,18 @@ class DuckFormTest extends PHPUnit_Framework_TestCase {
         $this->assertCount($requiredCount, $this->form->errors, "Should have {$requiredCount} errors when empty");
     }
 
+    public function testCustomFieldValidator()
+    {
+        $this->form->addFieldValidator('country', function($value, $fields, $form){
+            if(count($value) > 2) {
+                return "There should be more than 2 countries selected.";
+            }
+            return false;
+        });
+        $this->form->bind($this->data);
+        $this->assertFalse($this->form->validate());
+    }
+
     public function testDataBinding() {
         $this->form->bind($this->data, false);
         foreach($this->data as $name => $value) {
