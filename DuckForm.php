@@ -521,7 +521,7 @@ class DuckForm {
         // Custom field validators
         foreach($this->fieldValidators as &$validator) {
             $name = $validator['name'];
-            $value = isset($this->fields[$name]) ? $this->fields[$name] : null;
+            $value = isset($this->fields[$name]) ? $this->fields[$name]['value'] : null;
             $error = call_user_func_array($validator['callable'], array($value, $this->fields, $this));
             if($error) {
                 if(!isset($this->errors[$name])) {
@@ -529,6 +529,11 @@ class DuckForm {
                 }
                 $this->errors[$name][] = $error;
             }
+        }
+
+        // Custom field validators
+        foreach($this->formValidators as &$validator) {
+            call_user_func_array($validator, array($this->fields, &$this->errors, $this));
         }
 
         // Writing errors to document if necessary
