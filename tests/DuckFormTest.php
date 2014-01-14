@@ -47,13 +47,10 @@ class DuckFormTest extends PHPUnit_Framework_TestCase {
 
     public function testCustomFormValidator()
     {
-        $this->form->addFormValidator(function($fields, &$errors, $form){
+        $this->form->addFormValidator(function($fields, &$errors, DuckForm $form){
             $value = $fields['country']['value'];
             if(count($value) < 3) {
-                if(!isset($errors['country'])) {
-                    $errors['country'] = array();
-                }
-                $errors['country'][] = "There should be more than 2 countries selected.";
+                $form->addError('country', "There should be more than 2 countries selected.");
             }
             return false;
         });

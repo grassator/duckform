@@ -470,6 +470,18 @@ class DuckForm {
     }
 
     /**
+     * @param string $name
+     * @param string $error
+     */
+    public function addError($name, $error)
+    {
+        if(!isset($this->errors[$name])) {
+            $this->errors[$name] = array();
+        }
+        $this->errors[$name][] = $error;
+    }
+
+    /**
      * Validates the form, the errors if any will be located in
      * 'errors' attribute of the form
      * @param  bool $enforceFieldTypes e.g. validate that "email" field has a valid email
@@ -480,23 +492,22 @@ class DuckForm {
         $this->errors = array();
 
         foreach ($this->fields as $name => &$fieldData) {
-            $fieldErrors = array();
 
             // Checking for present value if the field is required
             if(!empty($fieldData['required'])) {
                 if(empty($fieldData['value'])) {
                     if($fieldData['type'] === 'radio') {
-                        $fieldErrors[] = $this->defaultErrorMessages['required-radio'];
+                        $this->addError($name, $this->defaultErrorMessages['required-radio']);
                     } elseif ($fieldData['type'] === 'checkbox') {
-                        $fieldErrors[] = $this->defaultErrorMessages['required-checkbox'];
+                        $this->addError($name, $this->defaultErrorMessages['required-checkbox']);
                     } elseif ($fieldData['type'] === 'select') {
                         if(empty($fieldData['multiple'])) {
-                            $fieldErrors[] = $this->defaultErrorMessages['required-select'];
+                            $this->addError($name, $this->defaultErrorMessages['required-select']);
                         } else {
-                            $fieldErrors[] = $this->defaultErrorMessages['required-select-multiple'];
+                            $this->addError($name, $this->defaultErrorMessages['required-select-multiple']);
                         }
                     } else {
-                        $fieldErrors[] = $this->defaultErrorMessages['required'];
+                        $this->addError($name, $this->defaultErrorMessages['required']);
                     }
                 }
             }
@@ -509,12 +520,8 @@ class DuckForm {
                     // international emails like "имя@домен.рф"
                     !preg_match("/[^\\s@]+@[^\\s@]+\\.[^\\s@]+/", $fieldData['value'])
                 ) {
-                    $fieldErrors[] = $this->defaultErrorMessages['email'];
+                    $this->addError($name, $this->defaultErrorMessages['email']);
                 }
-            }
-
-            if($fieldErrors) {
-                $this->errors[$name] = $fieldErrors;
             }
         }
 
@@ -524,10 +531,7 @@ class DuckForm {
             $value = isset($this->fields[$name]) ? $this->fields[$name]['value'] : null;
             $error = call_user_func_array($validator['callable'], array($value, $this->fields, $this));
             if($error) {
-                if(!isset($this->errors[$name])) {
-                    $this->errors[$name] = array();
-                }
-                $this->errors[$name][] = $error;
+                $this->addError($name, $error);
             }
         }
 
